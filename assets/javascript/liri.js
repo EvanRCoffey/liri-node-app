@@ -2,7 +2,6 @@
 
 // Write the code you need to grab the data from keys.js. Then store the keys in a variable.
 var twitterKeys = require("./keys.js");
-console.log(twitterKeys);
 
 // Pulls in command line arguments.
 var cmdArgs = process.argv;
@@ -93,8 +92,30 @@ else if (cmdArgs[2] === "spotify-this-song") {
 // 	* If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
 // 		* If you haven't watched "Mr. Nobody," then you should: http://www.imdb.com/title/tt0485947/
 // 		* It's on Netflix!
+//DONE!  Except for that I can't figure out how to console.log individual items (only the whole thing as one)
 else if (cmdArgs[2] === "movie-this") {
-  //Do things
+  var movieName = '';
+
+	if (cmdArgs[3]) {
+		movieName = cmdArgs[3];
+		for (var i = 4; i<cmdArgs.length; i++) {
+			movieName = movieName + "+" + cmdArgs[i];
+		}
+	}
+	else {
+		movieName = "Mr Nobody";
+	}
+
+	console.log(movieName);
+
+	var movieQueryURL = 'http://www.omdbapi.com/?t=' + movieName + '&plot=short&r=json';
+
+	var request = require('request');
+	request(movieQueryURL, function (error, response, body) {
+	  	if (!error && response.statusCode == 200) {
+	    	console.log(body);
+		}
+	})
 }
 
 //__________________________________________________________________________________________________
