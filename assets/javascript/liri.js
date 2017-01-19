@@ -106,14 +106,20 @@ else if (cmdArgs[2] === "movie-this") {
 		movieName = "Mr Nobody";
 	}
 
-	console.log(movieName);
-
 	var movieQueryURL = 'http://www.omdbapi.com/?t=' + movieName + '&plot=short&r=json';
 
 	var request = require('request');
 	request(movieQueryURL, function (error, response, body) {
 	  	if (!error && response.statusCode == 200) {
-	    	console.log(body);
+	    	var parsedBody = JSON.parse(body);
+	    	console.log("Title: " + parsedBody.Title);
+	    	console.log("Release year: " + parsedBody.Year);
+	    	console.log("IMDB rating: " + parsedBody.imdbRating + " out of 10");
+	    	console.log("Country: " + parsedBody.Country);
+	    	console.log("Language(s): " + parsedBody.Language);
+	    	console.log("Plot: " + parsedBody.Plot);
+	    	console.log("Actors: " + parsedBody.Actors);
+	    	console.log("Metascore: " + parsedBody.Metascore + " out of 100");
 		}
 	})
 }
@@ -124,5 +130,30 @@ else if (cmdArgs[2] === "movie-this") {
 // 		* It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
 // 		* Feel free to change the text in that document to test out the feature for other commands.
 else if (cmdArgs[2] === "do-what-it-says") {
-  //Do things
+	var spotify = require('spotify');
+	// NPM Package for reading and writing files
+	var fs = require("fs");
+	var fileContents = [];
+	var songName = '';
+
+	fs.readFile('../../random.txt', 'utf8', (err, data) => {
+	  	if (err) throw err;
+	 	fileContents = data.split(',');
+	  	for (var i = 0; i<fileContents.length; i++) {
+			fileContents[i] = fileContents[i].replace(/^"(.*)"$/, '$1');	  
+		}
+	  	songName = fileContents[1];
+	  	spotify.search({ type: 'track', query: songName }, function(err, data) {
+	    	if ( err ) {
+	        	console.log('Error occurred: ' + err);
+	        	return;
+	    	}
+	 		else {
+	 			console.log("Artist: " + data.tracks.items[0].artists[0].name);
+	 			console.log("Song name: " + data.tracks.items[0].name);
+	 			console.log("Preview URL: " + data.tracks.items[0].preview_url);
+	 			console.log("Album: " + data.tracks.items[0].album.name); 
+	 		}
+		});
+	});
 }
